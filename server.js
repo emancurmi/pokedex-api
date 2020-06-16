@@ -1,8 +1,7 @@
 require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
-
-console.log(process.env.API_TOKEN)
+const POKEDEX = require('./pokedex.json')
 
 const app = express()
 
@@ -21,19 +20,30 @@ app.use(function validateBearerToken(req, res, next) {
 
 const validTypes = [`Bug`, `Dark`, `Dragon`, `Electric`, `Fairy`, `Fighting`, `Fire`, `Flying`, `Ghost`, `Grass`, `Ground`, `Ice`, `Normal`, `Poison`, `Psychic`, `Rock`, `Steel`, `Water`]
 
-//7b967bbe-afc2-11ea-b3de-0242ac130004
-
-function handleGetTypes(req, res) {
+app.get('/types', function handleGetTypes(req, res) {
     res.json(validTypes)
-}
+})
 
-app.get('/types', handleGetTypes)
+app.get('/pokemon', function handleGetPokemon(req, res) {
+    let response = POKEDEX.pokemon;
 
-function handleGetPokemon(req, res) {
-    res.send('Hello, Pokemon!')
-}
+    // filter our pokemon by name if name query param is present
+    if (req.query.name) {
+        response = response.filter(pokemon =>
+            // case insensitive searching
+            pokemon.name.toLowerCase().includes(req.query.name.toLowerCase())
+        )
+    }
 
-app.get('/pokemon', handleGetPokemon)
+    // filter our pokemon by type if type query param is present
+    if (req.query.type) {
+        response = response.filter(pokemon =>
+            pokemon.type.includes(req.query.type)
+        )
+    }
+
+    res.json(response)
+})
 
 const PORT = 8000
 
