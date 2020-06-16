@@ -8,7 +8,7 @@ const app = express()
 
 app.use(morgan('dev'))
 
-
+app.use(validateBearerToken)
 
 
 const validTypes = [`Bug`, `Dark`, `Dragon`, `Electric`, `Fairy`, `Fighting`, `Fire`, `Flying`, `Ghost`, `Grass`, `Ground`, `Ice`, `Normal`, `Poison`, `Psychic`, `Rock`, `Steel`, `Water`]
@@ -19,13 +19,13 @@ function handleGetTypes(req, res) {
     res.json(validTypes)
 }
 
-app.get('/types', validateBearerToken, handleGetTypes)
+app.get('/types', handleGetTypes)
 
 function handleGetPokemon(req, res) {
     res.send('Hello, Pokemon!')
 }
 
-app.get('/pokemon', validateBearerToken, handleGetPokemon)
+app.get('/pokemon', handleGetPokemon)
 
 const PORT = 8000
 
